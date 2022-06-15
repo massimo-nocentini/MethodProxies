@@ -81,7 +81,9 @@ MpCountingMethodProxyTest >> testMergesort [
 
 	"Dual of `MTVisualizationsTest>>#testSequenceableCollectionMergeSortCopying`"
 
-	| proxies |
+	| proxies anArray |
+	anArray := #( 19 9 14 15 3 16 11 4 5 12 13 7 10 2 6 17 20 18 8 1 )
+		           copy.
 	"Setting up."
 	proxies := { 
 		           (SequenceableCollection >> #sort).
@@ -100,7 +102,7 @@ MpCountingMethodProxyTest >> testMergesort [
 	proxies do: [ :each | each install ].
 
 	"Do."
-	(1 to: 20) shuffled sort.
+	anArray sort.
 
 	"Check."
 	self assert: proxies first handler count equals: 1.
