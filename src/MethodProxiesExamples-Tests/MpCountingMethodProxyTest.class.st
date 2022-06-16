@@ -112,3 +112,30 @@ MpCountingMethodProxyTest >> testMergesort [
 	self assert: proxies fifth handler count equals: 20 ] ensure: [ 
 		proxies do: [ :each | each uninstall ] ]
 ]
+
+{ #category : #tests }
+MpCountingMethodProxyTest >> testOpalCompiler [
+
+	"Dual of `MTHandlerTest>>#exampleOpalCompiler`"
+
+	| proxies timeToRun |
+	"Setting up."
+	proxies := ({ #'AST-Core' asPackage } flatCollect: [ :each | 
+		            each methods ]) collect: [ :each | 
+		           MpMethodProxy
+			           on: each selector
+			           inClass: each methodClass
+			           handler: self handlerClass new ].
+
+	[ "Install."
+	proxies do: [ :each | each install ].
+
+	"Do."
+	timeToRun := [ OpalCompiler recompile ] timeToRun ] ensure: [ 
+		proxies do: [ :each | each uninstall ] ].
+
+	(proxies sorted: [ :aProxy :anotherProxy | 
+		 aProxy handler count > anotherProxy handler count ]) inspect.
+
+	timeToRun inspect
+]
