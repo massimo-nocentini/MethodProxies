@@ -33,8 +33,7 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 	returnValue := self
 		               valueWithReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] methodProxyEnsure:
-		MpMethodProxyDeactivator new.
+		               context: ctx ] ensure: MpMethodProxyDeactivator new.
 
 	^ returnValue
 ]
