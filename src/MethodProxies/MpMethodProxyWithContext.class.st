@@ -33,7 +33,8 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 	returnValue := self
 		               valueWithReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] ensure: MpMethodProxyDeactivator new.
+		               context: ctx ] methodProxyEnsure:
+		MpMethodProxyDeactivator new.
 
 	^ returnValue
 ]
@@ -42,13 +43,13 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 MpMethodProxyWithContext >> valueWithReceiver: receiver arguments: arguments context: aContext [
 
 	<methodProxyCannotWrap>
-	| result |
+	| result carry |
 	"Hooking into user methods to define before actions.
 	Before actions are not instrumented."
-	handler
-		beforeExecutionWithReceiver: receiver
-		arguments: arguments
-		context: aContext.
+	carry := handler
+		         beforeExecutionWithReceiver: receiver
+		         arguments: arguments
+		         context: aContext.
 
 	"Purposely do not use a non-local return.
 	Otherwise the non-local return logic would be instrumented and this could end in infinite loops"
@@ -69,5 +70,6 @@ MpMethodProxyWithContext >> valueWithReceiver: receiver arguments: arguments con
 		  afterExecutionWithReceiver: receiver
 		  arguments: arguments
 		  returnValue: result
+		  carry: carry
 		  context: aContext
 ]

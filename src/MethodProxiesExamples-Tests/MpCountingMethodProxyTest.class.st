@@ -109,7 +109,7 @@ MpCountingMethodProxyTest >> testMergesort [
 	self assert: proxies second handler count equals: 1.
 	self assert: proxies third handler count equals: 19.
 	self assert: proxies fourth handler count equals: 39.
-	self assert: proxies fifth handler count equals: 20 ] ensure: [ 
+	self assert: proxies fifth handler count equals: 19 ] ensure: [ 
 		proxies do: [ :each | each uninstall ] ]
 ]
 
