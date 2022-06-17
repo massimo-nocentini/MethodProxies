@@ -324,6 +324,27 @@ MpMethodProxyTest >> testRecursiveMethodWrapperDoesNotRecurse [
 	self assert: MpMockObject new recursiveMethod equals: 'trapped [original]'.
 ]
 
+{ #category : #'tests - safety' }
+MpMethodProxyTest >> testRecursiveMethodWrapperDoesNotRecurse1 [
+
+	| mw method mw1 |
+	method := MpMockObject >> #recursiveMethod.
+	mw := MpMethodProxy
+		      onMethod: method
+		      handler: MpMockMethodProxyHandler new.
+	self installMethodProxy: mw.
+
+	method := ByteString lookupSelector: #,.
+	mw1 := MpMethodProxy onMethod: method handler: MpCountingHandler new.
+	self installMethodProxy: mw1.
+
+	self
+		assert: MpMockObject new recursiveMethod
+		equals: 'trapped [original]'.
+
+	self assert: mw1 handler count equals: 0
+]
+
 { #category : #'tests - installation' }
 MpMethodProxyTest >> testUninstall [
 
