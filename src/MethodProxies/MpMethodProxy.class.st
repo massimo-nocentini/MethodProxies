@@ -68,8 +68,8 @@ MpMethodProxy class >> onMethod: aMethod handler: aHandler [
 
 { #category : #private }
 MpMethodProxy class >> uninstallAllWrappers [
-	"self uninstallAllWrappers"
 
+	<script: 'MpMethodProxy uninstallAllWrappers'>
 	self allSubInstancesDo: [ :inst | inst uninstall ]
 ]
 
