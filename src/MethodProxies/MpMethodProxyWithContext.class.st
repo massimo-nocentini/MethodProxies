@@ -1,8 +1,27 @@
 Class {
 	#name : #MpMethodProxyWithContext,
 	#superclass : #MpMethodProxy,
+	#instVars : [
+		'activator',
+		'deactivator'
+	],
 	#category : #MethodProxies
 }
+
+{ #category : #accessing }
+MpMethodProxyWithContext >> handler: aHandler [
+
+	handler := aHandler
+]
+
+{ #category : #initialization }
+MpMethodProxyWithContext >> initialize [
+
+	super initialize.
+
+	activator := MpMethodProxyActivator new.
+	deactivator := MpMethodProxyDeactivator new
+]
 
 { #category : #evaluation }
 MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver [
@@ -31,22 +50,24 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 	However, since a lot of code executes between the ensure block and the real method return, this could end in infinite loops"
 	[ 
 	returnValue := self
-		               valueWithReceiver: aReceiver
+		               valueOf: aSelector
+		               inReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] ensure: MpMethodProxyDeactivator new.
+		               context: ctx ] methodProxyEnsure: deactivator.
 
 	^ returnValue
 ]
 
 { #category : #'as yet unclassified' }
-MpMethodProxyWithContext >> valueWithReceiver: receiver arguments: arguments context: aContext [
+MpMethodProxyWithContext >> valueOf: aSelector inReceiver: aReceiver arguments: arguments context: aContext [
 
 	<methodProxyCannotWrap>
 	| result carry |
 	"Hooking into user methods to define before actions.
 	Before actions are not instrumented."
 	carry := handler
-		         beforeExecutionWithReceiver: receiver
+		         beforeExecutionOf: aSelector
+		         inReceiver: aReceiver
 		         arguments: arguments
 		         context: aContext.
 
@@ -55,18 +76,18 @@ MpMethodProxyWithContext >> valueWithReceiver: receiver arguments: arguments con
 	[ 
 	IsActiveInExecutionStack := false.
 	result := self
-		          receiver: receiver
+		          receiver: aReceiver
 		          withArgs: arguments
 		          executeMethod: proxifiedMethod.
 
 	"Eagerly set it to true to avoid instrumenting all messages done during the ensure"
-	IsActiveInExecutionStack := true ] methodProxyEnsure:
-		MpMethodProxyActivator new.
+	IsActiveInExecutionStack := true ] methodProxyEnsure: activator.
 
 	"Hooking into user methods to define after actions.
 	After actions are not instrumented."
 	^ handler
-		  afterExecutionWithReceiver: receiver
+		  afterExecutionOf: aSelector
+		  inReceiver: aReceiver
 		  arguments: arguments
 		  returnValue: result
 		  carry: carry

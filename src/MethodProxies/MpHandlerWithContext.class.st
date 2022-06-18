@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-MpHandlerWithContext >> afterExecutionWithReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue carry: carry context: aContext [
+MpHandlerWithContext >> afterExecutionOf: aSelector inReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue carry: carry context: aContext [
 
 	^ self
 		  afterExecutionWithReceiver: anObject
@@ -14,7 +14,7 @@ MpHandlerWithContext >> afterExecutionWithReceiver: anObject arguments: anArrayO
 ]
 
 { #category : #'as yet unclassified' }
-MpHandlerWithContext >> beforeExecutionWithReceiver: receiver arguments: arguments context: aContext [
+MpHandlerWithContext >> beforeExecutionOf: aSelector inReceiver: receiver arguments: arguments context: aContext [
 
 	^ self beforeExecutionWithReceiver: receiver arguments: arguments
 ]
