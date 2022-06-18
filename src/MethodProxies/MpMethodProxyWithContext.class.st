@@ -1,26 +1,24 @@
 Class {
 	#name : #MpMethodProxyWithContext,
 	#superclass : #MpMethodProxy,
-	#instVars : [
-		'activator',
-		'deactivator'
+	#classVars : [
+		'Activator',
+		'Deactivator'
 	],
 	#category : #MethodProxies
 }
+
+{ #category : #initialization }
+MpMethodProxyWithContext class >> initialize [
+
+	Activator := MpMethodProxyActivator new.
+	Deactivator := MpMethodProxyDeactivator new
+]
 
 { #category : #accessing }
 MpMethodProxyWithContext >> handler: aHandler [
 
 	handler := aHandler
-]
-
-{ #category : #initialization }
-MpMethodProxyWithContext >> initialize [
-
-	super initialize.
-
-	activator := MpMethodProxyActivator new.
-	deactivator := MpMethodProxyDeactivator new
 ]
 
 { #category : #evaluation }
@@ -53,7 +51,7 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 		               valueOf: aSelector
 		               inReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] methodProxyEnsure: deactivator.
+		               context: ctx ] methodProxyEnsure: Deactivator.
 
 	^ returnValue
 ]
@@ -81,7 +79,7 @@ MpMethodProxyWithContext >> valueOf: aSelector inReceiver: aReceiver arguments: 
 		          executeMethod: proxifiedMethod.
 
 	"Eagerly set it to true to avoid instrumenting all messages done during the ensure"
-	IsActiveInExecutionStack := true ] methodProxyEnsure: activator.
+	IsActiveInExecutionStack := true ] methodProxyEnsure: Activator.
 
 	"Hooking into user methods to define after actions.
 	After actions are not instrumented."
