@@ -3,16 +3,14 @@ Trait {
 	#category : #MethodProxies
 }
 
-{ #category : #'as yet unclassified' }
-TMpHandlerWithContext >> afterExecutionWithReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue carry: carry context: aContext [
+{ #category : #hooks }
+TMpHandlerWithContext >> afterExecutionOf: aSelector inReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue carry: carry context: aContext [
 
-	self afterMethod.
-
-	^ aReturnValue
+	self explicitRequirement
 ]
 
-{ #category : #'as yet unclassified' }
-TMpHandlerWithContext >> beforeExecutionWithReceiver: receiver arguments: arguments context: aContext [
+{ #category : #hooks }
+TMpHandlerWithContext >> beforeExecutionOf: aSelector inReceiver: receiver arguments: arguments context: aContext [
 
-	self beforeMethod
+	self explicitRequirement
 ]
