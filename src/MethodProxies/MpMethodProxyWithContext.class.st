@@ -36,12 +36,12 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 			  withArgs: anArrayOfObjects
 			  executeMethod: proxifiedMethod ].
 
+	"Reify the current context."
+	ctx := thisContext.
+
 	"We are now in the instrumentation world.
 	Do not instrument the instrumentation."
 	IsActiveInExecutionStack := true.
-
-	"Reify the current context."
-	ctx := thisContext.
 
 	"Purposely do not use a non-local return.
 	Otherwise the non-local return logic would be instrumented once the ensure block is executed.
@@ -51,7 +51,7 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 		               valueOf: aSelector
 		               inReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] methodProxyEnsure: Deactivator.
+		               context: ctx ] ensure: [ Deactivator value ].
 
 	^ returnValue
 ]
@@ -79,7 +79,8 @@ MpMethodProxyWithContext >> valueOf: aSelector inReceiver: aReceiver arguments: 
 		          executeMethod: proxifiedMethod.
 
 	"Eagerly set it to true to avoid instrumenting all messages done during the ensure"
-	IsActiveInExecutionStack := true ] methodProxyEnsure: Activator.
+	IsActiveInExecutionStack := true ] methodProxyEnsure: [ 
+		Activator value ].
 
 	"Hooking into user methods to define after actions.
 	After actions are not instrumented."
