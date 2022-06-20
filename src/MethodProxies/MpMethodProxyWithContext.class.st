@@ -1,3 +1,6 @@
+"
+I am a variant that reifies contexts in `MpMethodProxyWithContext>>#run:with:in:` and pass them around to handlers.
+"
 Class {
 	#name : #MpMethodProxyWithContext,
 	#superclass : #MpMethodProxy,

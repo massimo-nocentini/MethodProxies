@@ -1,3 +1,6 @@
+"
+I am a trait that defines both the pre and post handler hooks that take care of contexts reified by `MpMethodProxyWithContext`.
+"
 Trait {
 	#name : #TMpHandlerWithContext,
 	#category : #MethodProxies
