@@ -12,12 +12,9 @@ Class {
 { #category : #initialization }
 MpMethodProxyPool class >> initialize [
 
-	| act deact |
-	act := MpMethodProxyActivator new.
-	deact := MpMethodProxyDeactivator new.
-
-	Activator := [ act value ].
-	Deactivator := [ deact value ]
+	<methodProxyCannotWrap>
+	Activator := [ IsActiveInExecutionStack := true ].
+	Deactivator := [ IsActiveInExecutionStack := false ]
 ]
 
 { #category : #activation }
