@@ -24,7 +24,7 @@ MpMethodProxyWithContext >> handler: aHandler [
 	handler := aHandler
 ]
 
-{ #category : #evaluation }
+{ #category : #evaluating }
 MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver [
 
 	"Do not intercept"
@@ -59,7 +59,7 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 	^ returnValue
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #evaluating }
 MpMethodProxyWithContext >> valueOf: aSelector inReceiver: aReceiver arguments: arguments context: aContext [
 
 	<methodProxyCannotWrap>
