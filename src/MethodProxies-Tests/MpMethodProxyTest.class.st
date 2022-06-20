@@ -125,13 +125,17 @@ MpMethodProxyTest >> testCanWrapValue [
 MpMethodProxyTest >> testCanWrapValueWithException [
 
 	| mp handler |
-	mp := MpMethodProxy onMethod: (FullBlockClosure lookupSelector: #value) handler: (handler := MpCountingHandler new).
-	
+	mp := MpMethodProxy
+		      onMethod: (FullBlockClosure lookupSelector: #value)
+		      handler: (handler := MpCountingHandler new).
+
 	self installMethodProxy: mp.
 
-	[[[ 1 error ] value] value] on: Error do: #yourself "to avoid an extra block".
+	[ [ [ 1 error ] value ] value ]
+		on: Error
+		do: #yourself. "to avoid an extra block"
 
-	self assert: handler count equals: 2 "value" + 1 "on:do:"
+	self assert: handler count equals: 8 + 1 "value" "on:do:"
 ]
 
 { #category : #'tests - installation' }
