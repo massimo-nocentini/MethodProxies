@@ -4,19 +4,8 @@ I am a variant that reifies contexts in `MpMethodProxyWithContext>>#run:with:in:
 Class {
 	#name : #MpMethodProxyWithContext,
 	#superclass : #MpMethodProxy,
-	#classVars : [
-		'Activator',
-		'Deactivator'
-	],
 	#category : #MethodProxies
 }
-
-{ #category : #initialization }
-MpMethodProxyWithContext class >> initialize [
-
-	Activator := MpMethodProxyActivator new.
-	Deactivator := MpMethodProxyDeactivator new
-]
 
 { #category : #accessing }
 MpMethodProxyWithContext >> handler: aHandler [
@@ -54,7 +43,7 @@ MpMethodProxyWithContext >> run: aSelector with: anArrayOfObjects in: aReceiver 
 		               valueOf: aSelector
 		               inReceiver: aReceiver
 		               arguments: anArrayOfObjects
-		               context: ctx ] ensure: [ Deactivator value ].
+		               context: ctx ] ensure: Deactivator.
 
 	^ returnValue
 ]
@@ -82,8 +71,7 @@ MpMethodProxyWithContext >> valueOf: aSelector inReceiver: aReceiver arguments: 
 		          executeMethod: proxifiedMethod.
 
 	"Eagerly set it to true to avoid instrumenting all messages done during the ensure"
-	IsActiveInExecutionStack := true ] methodProxyEnsure: [ 
-		Activator value ].
+	IsActiveInExecutionStack := true ] methodProxyEnsure: Activator.
 
 	"Hooking into user methods to define after actions.
 	After actions are not instrumented."
