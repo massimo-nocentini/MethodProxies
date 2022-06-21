@@ -8,22 +8,11 @@ The main API is composed of two methods:
 Class {
 	#name : #MpHandler,
 	#superclass : #Object,
-	#traits : 'TMpHandlerWithContext',
-	#classTraits : 'TMpHandlerWithContext classTrait',
 	#instVars : [
 		'proxy'
 	],
 	#category : #MethodProxies
 }
-
-{ #category : #hooks }
-MpHandler >> afterExecutionOf: aSelector inReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue carry: carry context: aContext [
-
-	^ self
-		  afterExecutionWithReceiver: anObject
-		  arguments: anArrayOfObjects
-		  returnValue: aReturnValue
-]
 
 { #category : #evaluating }
 MpHandler >> afterExecutionWithReceiver: anObject arguments: anArrayOfObjects returnValue: aReturnValue [
@@ -35,12 +24,6 @@ MpHandler >> afterExecutionWithReceiver: anObject arguments: anArrayOfObjects re
 { #category : #evaluating }
 MpHandler >> afterMethod [
 	"Perform action after execution."
-]
-
-{ #category : #hooks }
-MpHandler >> beforeExecutionOf: aSelector inReceiver: receiver arguments: arguments context: aContext [
-
-	^ self beforeExecutionWithReceiver: receiver arguments: arguments
 ]
 
 { #category : #evaluating }
