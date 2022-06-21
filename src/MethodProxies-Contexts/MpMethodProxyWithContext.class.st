@@ -4,6 +4,9 @@ I am a variant that reifies contexts in `MpMethodProxyWithContext>>#run:with:in:
 Class {
 	#name : #MpMethodProxyWithContext,
 	#superclass : #MpMethodProxy,
+	#pools : [
+		'MpMethodProxyWithContextPool'
+	],
 	#category : #'MethodProxies-Contexts'
 }
 

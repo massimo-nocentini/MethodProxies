@@ -83,7 +83,7 @@ MpCountingMethodProxyWithContextTest >> testCannotWrapCriticalProxyMethods8 [
 
 	| mp handler |
 	mp := self proxyClass
-		      onMethod: MpMethodProxyPool class >> #initialize
+		      onMethod: MpMethodProxyWithContextPool class >> #initialize
 		      handler: (handler := self handlerClass new).
 
 	self assertCannotInstall: mp
