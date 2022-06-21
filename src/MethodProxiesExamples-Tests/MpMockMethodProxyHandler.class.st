@@ -1,3 +1,7 @@
+"
+I am a variant that overrides the *after* hook such that the returned value 
+is converted as `String` and some debugging test is appended to it.
+"
 Class {
 	#name : #MpMockMethodProxyHandler,
 	#superclass : #MpHandler,

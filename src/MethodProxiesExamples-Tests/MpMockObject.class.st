@@ -1,3 +1,6 @@
+"
+I support testing.
+"
 Class {
 	#name : #MpMockObject,
 	#superclass : #Object,
