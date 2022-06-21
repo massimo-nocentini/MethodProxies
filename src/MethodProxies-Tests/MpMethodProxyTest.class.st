@@ -153,7 +153,7 @@ MpMethodProxyTest >> testCanWrapValueWithException [
 		on: Error
 		do: #yourself. "to avoid an extra block"
 
-	self assert: handler count equals: 8 + 1 "value" "on:do:"
+	self assert: handler count equals: 2 "value" + 1 "on:do:"
 ]
 
 { #category : #'tests - installation' }

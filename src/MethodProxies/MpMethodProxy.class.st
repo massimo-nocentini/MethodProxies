@@ -241,7 +241,8 @@ MpMethodProxy >> run: aSelector with: anArrayOfObjects in: aReceiver [
 	[ 
 	returnValue := self
 		               valueWithReceiver: aReceiver
-		               arguments: anArrayOfObjects ] ensure: Deactivator.
+		               arguments: anArrayOfObjects ] ensure:
+		MpMethodProxyDeactivator new.
 
 	^ returnValue
 ]
@@ -317,7 +318,8 @@ MpMethodProxy >> valueWithReceiver: receiver arguments: arguments [
 		          executeMethod: proxifiedMethod.
 
 	"Eagerly set it to true to avoid instrumenting all messages done during the ensure"
-	IsActiveInExecutionStack := true ] methodProxyEnsure: Activator.
+	IsActiveInExecutionStack := true ] methodProxyEnsure:
+		MpMethodProxyActivator new.
 
 	"Hooking into user methods to define after actions.
 	After actions are not instrumented."

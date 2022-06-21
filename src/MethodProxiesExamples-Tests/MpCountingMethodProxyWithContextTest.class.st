@@ -37,11 +37,31 @@ MpCountingMethodProxyWithContextTest >> benchOpalCompiler [
 	benchWithContext := [ OpalCompiler recompile ] bench ] ensure: [ 
 		proxies do: [ :each | each uninstall ] ].
 
-	(Array with: bench with: benchWithContext) inspect
+	Dictionary new
+		at: 'without contexts' put: bench;
+		at: 'with contexts' put: benchWithContext;
+		inspect
 ]
 
 { #category : #hook }
 MpCountingMethodProxyWithContextTest >> proxyClass [
 
 	^ MpMethodProxyWithContext
+]
+
+{ #category : #tests }
+MpCountingMethodProxyWithContextTest >> testCanWrapValueWithException [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: (FullBlockClosure lookupSelector: #value)
+		      handler: (handler := MpCountingHandler new).
+
+	self installMethodProxy: mp.
+
+	[ [ [ 1 error ] value ] value ]
+		on: Error
+		do: #yourself. "to avoid an extra block"
+
+	self assert: handler count equals: 8 + 1 "value" "on:do:"
 ]
