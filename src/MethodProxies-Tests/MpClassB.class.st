@@ -1,3 +1,6 @@
+"
+A variant to ease testing.
+"
 Class {
 	#name : #MpClassB,
 	#superclass : #MpClassA,

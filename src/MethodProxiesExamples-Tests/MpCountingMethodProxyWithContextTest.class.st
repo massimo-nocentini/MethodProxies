@@ -44,6 +44,18 @@ MpCountingMethodProxyWithContextTest >> benchOpalCompiler [
 ]
 
 { #category : #hook }
+MpCountingMethodProxyWithContextTest >> handlerClass [
+
+	^ MpCountingWithContextHandler
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyWithContextTest >> mockHandlerClass [
+
+	^ MpMockWithContextHandler
+]
+
+{ #category : #hook }
 MpCountingMethodProxyWithContextTest >> proxyClass [
 
 	^ MpMethodProxyWithContext
@@ -55,7 +67,7 @@ MpCountingMethodProxyWithContextTest >> testCanWrapValueWithException [
 	| mp handler |
 	mp := self proxyClass
 		      onMethod: (FullBlockClosure lookupSelector: #value)
-		      handler: (handler := MpCountingHandler new).
+		      handler: (handler := self handlerClass new).
 
 	self installMethodProxy: mp.
 
@@ -64,4 +76,15 @@ MpCountingMethodProxyWithContextTest >> testCanWrapValueWithException [
 		do: #yourself. "to avoid an extra block"
 
 	self assert: handler count equals: 8 + 1 "value" "on:do:"
+]
+
+{ #category : #tests }
+MpCountingMethodProxyWithContextTest >> testCannotWrapCriticalProxyMethods8 [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: MpMethodProxyPool class >> #initialize
+		      handler: (handler := self handlerClass new).
+
+	self assertCannotInstall: mp
 ]

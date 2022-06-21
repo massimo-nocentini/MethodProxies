@@ -1,7 +1,7 @@
 Class {
 	#name : #MpMockObject,
 	#superclass : #Object,
-	#category : #'MethodProxies-Tests'
+	#category : #'MethodProxiesExamples-Tests'
 }
 
 { #category : #G }

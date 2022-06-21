@@ -10,6 +10,106 @@ MpCountingMethodProxyTest >> handlerClass [
 	^ MpCountingHandler
 ]
 
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> mockHandlerClass [
+
+	^ MpMockMethodProxyHandler
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapAboutToReturnThroughWithNonLocalReturn [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: Context >> #aboutToReturn:through:
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	self callEnsureWithNonLocalReturn.
+
+	self assert: handler count equals: 1
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapEnsure [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: BlockClosure >> #ensure:
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	[ 1 ] ensure: [ 2 ].
+
+	self assert: handler count equals: 1
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapEnsureNonLocalReturn [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: BlockClosure >> #ensure:
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	self callEnsureWithNonLocalReturn.
+
+	self assert: handler count equals: 1
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapEnsureWithException [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: BlockClosure >> #ensure:
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	[ [ 1 error ] ensure: [ 2 ] ]
+		on: Error
+		do: [ "nothing" ].
+
+	self assert: handler count equals: 1
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapValue [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: (FullBlockClosure lookupSelector: #value)
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	[ [ 1 ] value ] value.
+
+	self assert: handler count equals: 2
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testCanWrapValueWithException [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: (FullBlockClosure lookupSelector: #value)
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	[ [ [ 1 error ] value ] value ]
+		on: Error
+		do: #yourself. "to avoid an extra block"
+
+	self assert: handler count equals: 2 + 1 "value" "on:do:"
+]
+
 { #category : #tests }
 MpCountingMethodProxyTest >> testCounts [
 
@@ -25,6 +125,53 @@ MpCountingMethodProxyTest >> testCounts [
 	self assert: handler count equals: 1.
 	instance methodOne.
 	self assert: handler count equals: 2 ] ensure: [ proxy uninstall ]
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testExceptionsAfterInstrumentationDoNotBreakInstrumentation [
+
+	| mp handler |
+	mp := self proxyClass
+		      onMethod: Object >> #error:
+		      handler: (handler := self handlerClass new).
+
+	self installMethodProxy: mp.
+
+	"An error after instrumentation should not break the instrumentation.
+	Subsequent calls should still be instrumented, and the counting code should still execute regardless the exception"
+	2 timesRepeat: [ 
+		[ 
+		MpClassB new error: 'error after instrumentation'.
+		self fail ]
+			on: Error
+			do: [ :error |  ] ].
+
+	self assert: handler count equals: 2
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testExceptionsAfterInstrumentationFlow [
+
+	"Managing exceptions in the wrapper"
+
+	| p |
+	p := self proxyClass
+		     onMethod: Object >> #error:
+		     handler: self handlerClass new.
+
+	self installMethodProxy: p.
+
+	"An error after instrumentation should not break the instrumentation.
+	Subsequent calls should still be instrumented"
+	2 timesRepeat: [ 
+		[ 
+		MpClassB new error: 'error after instrumentation'.
+		self fail ]
+			on: Error
+			do: [ :error | 
+				self
+					assert: error messageText
+					equals: 'error after instrumentation' ] ]
 ]
 
 { #category : #tests }
@@ -87,4 +234,27 @@ MpCountingMethodProxyTest >> testOpalCompiler [
 		 aProxy handler count > anotherProxy handler count ]) inspect.
 
 	timeToRun inspect
+]
+
+{ #category : #'tests - safety' }
+MpCountingMethodProxyTest >> testRecursiveMethodWrapperDoesNotRecurse1 [
+
+	| mw method mw1 |
+	method := MpMockObject >> #recursiveMethod.
+	mw := self proxyClass
+		      onMethod: method
+		      handler: self mockHandlerClass new.
+	self installMethodProxy: mw.
+
+	method := ByteString lookupSelector: #,.
+	mw1 := self proxyClass
+		       onMethod: method
+		       handler: self handlerClass new.
+	self installMethodProxy: mw1.
+
+	self
+		assert: MpMockObject new recursiveMethod
+		equals: 'trapped [original]'.
+
+	self assert: mw1 handler count equals: 0
 ]
