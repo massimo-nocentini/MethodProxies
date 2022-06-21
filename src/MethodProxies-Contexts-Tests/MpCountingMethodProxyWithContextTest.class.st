@@ -1,7 +1,7 @@
 Class {
 	#name : #MpCountingMethodProxyWithContextTest,
 	#superclass : #MpCountingMethodProxyTest,
-	#category : #'MethodProxiesExamples-Tests'
+	#category : #'MethodProxies-Contexts-Tests'
 }
 
 { #category : #benchmarking }
