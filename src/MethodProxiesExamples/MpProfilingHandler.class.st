@@ -57,9 +57,8 @@ MpProfilingHandler >> initialize [
 { #category : #evaluating }
 MpProfilingHandler >> instrumentImplementorsOf: potentialSelector [
 
-	| proxy |
-	potentialSelector implementors do: [ :method |
-		proxy := MpMethodProxy onMethod: method handler: MpProfilingHandler new.
-		proxy ifNotNil: [ proxy install ].
-	]
+	potentialSelector implementors do: [ :method | 
+		| aProxy |
+		aProxy := MpMethodProxy onMethod: method handler: self class new.
+		aProxy ifNotNil: [ aProxy install ] ]
 ]
